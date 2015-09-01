@@ -1,4 +1,4 @@
-class FourSquare
+module FourSquare
 
   API_ROOT = "https://api.foursquare.com/v2/"
   API_VERSION = '20140806'
