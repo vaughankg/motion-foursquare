@@ -1,5 +1,15 @@
-module FourSquare
+module Foursquare
   module Venues
+
+    # Retrieve information about a venue
+    #
+    # param [String] venue_id The ID of the venue
+
+    def venue(venue_id, params = {}, callbacks = {}, &block)
+      request(:get, "venues/#{venue_id}", params, callbacks) do |response|
+        block.call(response["venue"])
+      end
+    end
 
     # Suggest venue completions. Returns a list of mini-venues partially matching the search term, near the location.
     #
@@ -11,10 +21,12 @@ module FourSquare
     # @option params String :query - Query to match venues on.
     # @option params Integer :limit - The limit of results to return.
 
-    def venues_suggestcompletion(params = {}, &block)
-      request(:get, "venues/suggestcompletion", params, &block)
+    def suggest_completion_venues(params, callbacks = {}, &block)
+      return unless params[:query].length > 2
+      request(:get, "venues/suggestcompletion", params, callbacks) do |response|
+        block.call(response["minivenues"])
+      end
     end
-
   end
-end
 
+end

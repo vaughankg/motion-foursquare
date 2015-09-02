@@ -1,24 +1,25 @@
-module FourSquare
+module Foursquare
 
-  API_ROOT = "https://api.foursquare.com/v2/"
-  API_VERSION = '20140806'
-  M_PARAMETER = 'foursquare'
-
-  CLIENT_ID = ""
-  CLIENT_SECRET = ""
+  @default_options = {
+    api_root:"https://api.foursquare.com/v2",
+    api_version: '20140806',
+    m_parameter: 'foursquare',
+    client_id: "",
+    client_secret: "",
+  }
 
   def self.client(options = {})
-    Client.new(default_options.merge(options))
+    Client.new(options)
+  end
+
+  def self.set_default_options(options = {})
+    options.each do |key, value|
+      @default_options[key] = value
+    end
   end
 
   def self.default_options
-    {
-      api_root: API_ROOT,
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      api_version: API_VERSION,
-      m_parameter: M_PARAMETER
-    }
+    @default_options
   end
 
 end

@@ -1,11 +1,13 @@
-class FourSquare
+class Foursquare
 
   class Client
     include Venues
 
-    def initialize(options)
-      options.each do |key, value|
-        instance_variable_set("@#{key}", value)
+    attr_accessor :api_root, :client_id, :client_secret, :api_version, :m_parameter
+
+    def initialize(options = {})
+      Foursquare.default_options.merge(options).each do |key, value|
+        send("#{key}=", value)
       end
 
       @client ||= AFMotion::Client.build(@api_root) do
@@ -14,12 +16,21 @@ class FourSquare
       end
     end
 
+    def api_params
+      {
+        client_id: @client_id,
+        client_secret: @client_secret,
+        m: @m_parameter,
+        v: @api_version
+      }
+    end
+
     def request(method, endpoint, params, callbacks = {}, &block)
-      params.merge!(userless_access_params).merge!(version_params)
+      params.merge!(api_params)
 
       @client.send(method, endpoint, params) do |result|
         if result.success?
-          block.call(result.object)
+          block.call(result.object["response"])
         elsif result.failure?
           handle_errors(result, callbacks[:failure])
         end
@@ -28,17 +39,9 @@ class FourSquare
 
     def handle_errors(result, callback = nil)
       callback ||= Proc.new {}
-      errors = { description: result.error.localizedDescription }
+      errors = { description: result.error.localizedDescription, result: result}
       errors.merge!(result.object) if result.object
       callback.call(errors)
-    end
-
-    def userless_access_params
-      { client_id: @client_id, client_secret: @client_secret }
-    end
-
-    def version_params
-      { v: @api_version, m: @m_paramater }
     end
 
   end

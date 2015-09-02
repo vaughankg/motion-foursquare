@@ -13,7 +13,18 @@ Gem::Specification.new do |gem|
 
   gem.version       = Foursquare::VERSION
 
-  gem.add_dependency("afmotion", "~>2.5")
+  files = []
+  files.concat(Dir.glob('lib/**/*.rb'))
+  files.concat(Dir.glob('templates/**/*.rb'))
+  gem.files = files
+
+  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
+  gem.require_paths = ["lib"]
+
+  gem.add_runtime_dependency("afmotion", "~>2.5")
+  gem.add_runtime_dependency "motion-cocoapods"
   gem.add_development_dependency("rake", "~>0")
+  gem.add_development_dependency("motion-fixtures", "~>0.1.0")
+  gem.add_development_dependency("webstub", "~>1.1.3")
 end
 
